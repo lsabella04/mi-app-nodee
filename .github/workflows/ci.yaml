@@ -25,3 +25,19 @@ jobs:
  
       - name: Ejecutar pruebas 
         run: npm test
+        
+  build-docker:
+    needs: test  # Ejecutar solo si el job 'test' pasa
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+    - name: Configurar Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    - name: Construir imagen Docker
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false # Solo construye, no publica
+        tags: miusuario/mi-app:${{ github.sha }}
